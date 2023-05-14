@@ -23,7 +23,7 @@ type PingRequest struct {
 	Message string `json:"message"`
 }
 
-type Config struct {
+type EnvConfig struct {
 	DatabaseUrl  string `mapstructure:"DATABASE_URL"`
 	DatabaseName string `mapstructure:"DB_NAME"`
 	RedisUrl     string `mapstructure:"REDIS_URL"`
@@ -51,7 +51,7 @@ func GetSecrets(logger *zap.Logger) {
 	}
 
 	// Set configuration variables based on struct fields
-	var config Config
+	var config EnvConfig
 	if err := viper.Unmarshal(&config); err != nil {
 		logger.Panic("error retrieving secret value", zap.Error(err))
 		os.Exit(1)
@@ -108,4 +108,58 @@ func HandleValidationError(c *fiber.Ctx, err error) error {
 	}
 
 	return HandleError(c, errors.New(errMessage))
+}
+
+type Config struct {
+	// Filter defines a function to skip middleware.
+	// Optional. Default: nil
+	Filter func(*fiber.Ctx) bool
+
+	// SuccessHandler defines a function which is executed for a valid token.
+	// Optional. Default: nil
+	SuccessHandler fiber.Handler
+
+	// ErrorHandler defines a function which is executed for an invalid token.
+	// It may be used to define a custom JWT error.
+	// Optional. Default: 401 Invalid or expired JWT
+	ErrorHandler fiber.ErrorHandler
+
+	// Signing key to validate token. Used as fallback if SigningKeys has length 0.
+	// Required. This or SigningKeys.
+	SigningKey interface{}
+
+	// Map of signing keys to validate token with kid field usage.
+	// Required. This or SigningKey.
+	SigningKeys map[string]interface{}
+
+	// Signing method, used to check token signing method.
+	// Optional. Default: "HS256".
+	// Possible values: "HS256", "HS384", "HS512", "ES256", "ES384", "ES512", "RS256", "RS384", "RS512"
+	SigningMethod string
+
+	// Context key to store user information from the token into context.
+	// Optional. Default: "user".
+	ContextKey string
+
+	// Claims are extendable claims data defining token content.
+	// Optional. Default value jwt.MapClaims
+	Claims jwt.Claims
+
+	// TokenLookup is a string in the form of "<source>:<name>" that is used
+	// to extract token from the request.
+	// Optional. Default value "header:Authorization".
+	// Possible values:
+	// - "header:<name>"
+	// - "query:<name>"
+	// - "param:<name>"
+	// - "cookie:<name>"
+	TokenLookup string
+
+	// AuthScheme to be used in the Authorization header.
+	// Optional. Default: "Bearer".
+	AuthScheme string
+
+	KeyFunc jwt.Keyfunc
+
+	ValidatorFunction AuthMiddlewareUsecase
 }

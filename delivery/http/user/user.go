@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"github.com/go-playground/validator/v10"
+	"movies-review-api/delivery/http/middleware"
 
 	"movies-review-api/domain"
 	"movies-review-api/pkg/logger"
@@ -19,12 +20,14 @@ var (
 
 type UserHandler struct {
 	UserUsecase domain.UserUsecase
+	UserRepo    domain.UserRepository
 	Logger      *zap.Logger
 }
 
-func New(userRouter fiber.Router, u domain.UserUsecase, auth fiber.Router) {
+func New(userRouter fiber.Router, u domain.UserUsecase, r domain.UserRepository, auth fiber.Router) {
 	handler := &UserHandler{
 		UserUsecase: u,
+		UserRepo:    r,
 	}
 
 	l, _ := logger.InitLogger()
@@ -33,6 +36,7 @@ func New(userRouter fiber.Router, u domain.UserUsecase, auth fiber.Router) {
 
 	auth.Post("/login", handler.Login)
 	userRouter.Post("/signup", handler.SignUp)
+	userRouter.Get("/profile", middleware.Protected(r), handler.FetchUserProfile)
 }
 
 func (h *UserHandler) SignUp(c *fiber.Ctx) error {
@@ -102,4 +106,23 @@ func (h *UserHandler) Login(c *fiber.Ctx) error {
 			"token": token,
 		},
 	})
+}
+
+func (h *UserHandler) FetchUserProfile(c *fiber.Ctx) error {
+
+	id := c.Locals("user_id").(string)
+
+	user, err := h.UserRepo.GetById(context.TODO(), id)
+
+	if err != nil {
+		return domain.HandleError(c, err)
+	}
+
+	user.Password = ""
+
+	return c.JSON(fiber.Map{
+		"error": false,
+		"data":  user,
+	})
+
 }

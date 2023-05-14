@@ -18,7 +18,7 @@ type User struct {
 	Lastname         string     `validate:"required" json:"lastname" bson:"lastname"`
 	Email            string     `validate:"required" json:"email" bson:"email"`
 	Password         string     `validate:"required" json:"password,omitempty" bson:"password"`
-	DeletedAt        *time.Time `json:"deleted_at" bson:"deleted_at"`
+	DeletedAt        *time.Time `json:"deleted_at,omitempty" bson:"deleted_at"`
 }
 
 func (u *User) Default() interface{} {
@@ -42,9 +42,14 @@ type LoginRequest struct {
 type UserRepository interface {
 	GetByEmail(ctx context.Context, email string) (*User, error)
 	Create(ctx context.Context, user *User) (*User, error)
+	GetById(ctx context.Context, userId string) (*User, error)
 }
 
 type UserUsecase interface {
 	Login(ctx context.Context, reqBody *LoginRequest) (*User, error)
 	Signup(ctx context.Context, reqBody *SignupRequest) (*User, error)
+}
+
+type AuthMiddlewareUsecase interface {
+	GetById(ctx context.Context, userId string) (*User, error)
 }

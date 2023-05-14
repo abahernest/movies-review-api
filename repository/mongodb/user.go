@@ -43,6 +43,18 @@ func (m mongoUserRepository) Create(ctx context.Context, user *domain.User) (*do
 	return user, nil
 }
 
+func (m mongoUserRepository) GetById(ctx context.Context, id string) (*domain.User, error) {
+	var user domain.User
+
+	err := m.Coll.FindByIDWithCtx(ctx, id, &user)
+
+	if err != nil {
+		m.Logger.Error(err.Error(), zap.Error(err))
+		return nil, err
+	}
+
+	return &user, nil
+}
 func NewUserRepository(logger *zap.Logger) domain.UserRepository {
 	return &mongoUserRepository{
 		Logger: logger,

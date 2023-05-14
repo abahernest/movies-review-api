@@ -16,5 +16,5 @@ func setupRouter(app *fiber.App, config Config) {
 	userRouter := v1.Group("/user")
 
 	userUseCase := userU.New(config.UserRepo)
-	user.New(userRouter, userUseCase, authRouter)
+	user.New(userRouter, userUseCase, config.UserRepo, authRouter)
 }
