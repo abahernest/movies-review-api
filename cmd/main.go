@@ -3,10 +3,13 @@ package main
 import (
 	"flag"
 	"fmt"
+	"github.com/spf13/viper"
 	"log"
 	httpDelivery "movies-review-api/delivery/http"
 	port "movies-review-api/delivery/http"
+	"movies-review-api/domain"
 	"movies-review-api/pkg/logger"
+	"movies-review-api/repository/mongodb"
 	"os"
 )
 
@@ -29,13 +32,17 @@ func main() {
 
 	l.Info(fmt.Sprintf("Loading %s env", env))
 
-	l.Info("Starting App")
+	domain.GetSecrets(l)
 
-	httpConfig := httpDelivery.Config{}
+	repo := mongodb.New(l)
+
+	httpConfig := httpDelivery.Config{
+		UserRepo: repo.UserRepo,
+	}
 
 	app := port.RunHttpServer(httpConfig)
 
-	port := os.Getenv("PORT")
+	port := viper.Get("PORT")
 
 	if port == "" {
 		port = "6001"

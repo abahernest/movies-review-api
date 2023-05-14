@@ -1,7 +1,6 @@
 run-dev:
 	export APP_ENV="dev" && \
- 	cd ./cmd && \
- 	go run -race main.go
+ 	go run -race cmd/main.go
 
 run-prod:
 	export APP_ENV="prod" && \

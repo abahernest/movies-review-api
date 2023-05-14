@@ -3,19 +3,16 @@ package http
 import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
+	"movies-review-api/domain"
 )
 
 type Config struct {
+	UserRepo domain.UserRepository
 }
 
 func RunHttpServer(config Config) *fiber.App {
 	app := fiber.New()
 	app.Use(cors.New())
-	//app.Use(csrf.New(
-	//	csrf.Config{
-	//		CookieHTTPOnly: true,
-	//		CookieSecure:   true,
-	//	}))
 
 	// setup routes
 	setupRouter(app, config)
