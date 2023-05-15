@@ -49,7 +49,3 @@ type UserUsecase interface {
 	Login(ctx context.Context, reqBody *LoginRequest) (*User, error)
 	Signup(ctx context.Context, reqBody *SignupRequest) (*User, error)
 }
-
-type AuthMiddlewareUsecase interface {
-	GetById(ctx context.Context, userId string) (*User, error)
-}

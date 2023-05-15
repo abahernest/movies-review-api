@@ -161,5 +161,5 @@ type Config struct {
 
 	KeyFunc jwt.Keyfunc
 
-	ValidatorFunction AuthMiddlewareUsecase
+	ValidatorFunction UserRepository
 }

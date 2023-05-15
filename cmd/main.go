@@ -38,6 +38,7 @@ func main() {
 
 	httpConfig := httpDelivery.Config{
 		UserRepo: repo.UserRepo,
+		FilmRepo: repo.FilmRepo,
 	}
 
 	app := port.RunHttpServer(httpConfig)
