@@ -27,3 +27,18 @@ The original explanation about this repos structure can be read from this medium
 It may be different already, but the concept is still the same in application level
 
 
+## Postman Documentation
+
+[https://documenter.getpostman.com/view/11044390/2s93eeQUkg](https://documenter.getpostman.com/view/11044390/2s93eeQUkg)
+
+## App Features
+
+- User Authentication (Signup & Login)
+- Fetch Movies (All Movies & Single Movie):
+Fetch Movie Data from the open star wars api, store hash in database to know when the api data changes.
+- Comment On Movies 
+- Live Deployment on Heroku
+
+## Limitations / Todo
+
+- Unit & Integration Test

@@ -3,7 +3,6 @@ package user
 import (
 	"context"
 	"errors"
-
 	"movies-review-api/domain"
 )
 
@@ -19,10 +18,9 @@ func (u userUsecase) Login(ctx context.Context, data *domain.LoginRequest) (*dom
 	}
 
 	// check password hash
-	if !domain.CheckPasswordHash(data.Password, existingUser.Password) {
+	if isCorrect := domain.CheckPasswordHash(data.Password, existingUser.Password); !isCorrect {
 		return nil, errors.New("invalid login credentials")
 	}
-
 	return existingUser, nil
 }
 

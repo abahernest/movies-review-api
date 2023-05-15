@@ -2,6 +2,8 @@ package mongodb
 
 import (
 	"context"
+	"errors"
+	"go.mongodb.org/mongo-driver/mongo"
 	"movies-review-api/domain"
 
 	"github.com/Kamva/mgm/v2"
@@ -16,19 +18,18 @@ type mongoUserRepository struct {
 }
 
 func (m mongoUserRepository) GetByEmail(ctx context.Context, email string) (*domain.User, error) {
-	var users []domain.User
+	var user domain.User
 
-	err := m.Coll.SimpleFindWithCtx(ctx, &users, bson.D{{Key: "email", Value: email}})
+	err := m.Coll.FindOne(ctx, bson.D{{Key: "email", Value: email}}).Decode(&user)
 
 	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return nil, errors.New("user not found")
+		}
 		return nil, err
 	}
 
-	if len(users) == 0 {
-		return nil, nil
-	}
-
-	return &users[0], nil
+	return &user, nil
 }
 
 func (m mongoUserRepository) Create(ctx context.Context, user *domain.User) (*domain.User, error) {
