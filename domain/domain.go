@@ -9,7 +9,6 @@ import (
 	"github.com/joho/godotenv"
 	"go.uber.org/zap"
 	"golang.org/x/crypto/bcrypt"
-	"log"
 	"os"
 	"time"
 )
@@ -40,10 +39,7 @@ func HandleError(c *fiber.Ctx, err error) error {
 
 func GetSecrets(logger *zap.Logger) {
 
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
+	_ = godotenv.Load()
 
 }
 
