@@ -1,1 +1,0 @@
-web: ./movies-review-api
