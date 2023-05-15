@@ -1,15 +1,16 @@
 package domain
 
 import (
+	"errors"
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
+	"github.com/joho/godotenv"
 	"github.com/spf13/viper"
-	"golang.org/x/crypto/bcrypt"
-
-	"errors"
 	"go.uber.org/zap"
+	"golang.org/x/crypto/bcrypt"
+	"log"
 	"os"
 	"time"
 )
@@ -38,29 +39,37 @@ func HandleError(c *fiber.Ctx, err error) error {
 		})
 }
 
-func GetSecrets(logger *zap.Logger) {
-	// Load the configuration file
-	viper.SetConfigFile(".env")
-	viper.SetConfigType("env")
-	viper.AddConfigPath(".")
-	viper.AutomaticEnv()
+func GetSecrets(logger *zap.Logger, app_env string) {
 
-	if err := viper.ReadInConfig(); err != nil {
-		logger.Panic("Error reading config file", zap.Error(err))
-		os.Exit(1)
+	if app_env == "prod" {
+		err := godotenv.Load()
+		if err != nil {
+			log.Fatal("Error loading .env file")
+		}
+	} else {
+		// Load the configuration file
+		viper.SetConfigFile(".env")
+		viper.SetConfigType("env")
+		viper.AddConfigPath(".")
+		viper.AutomaticEnv()
+
+		if err := viper.ReadInConfig(); err != nil {
+			logger.Panic("Error reading config file", zap.Error(err))
+			os.Exit(1)
+		}
+
+		// Set configuration variables based on struct fields
+		var config EnvConfig
+		if err := viper.Unmarshal(&config); err != nil {
+			logger.Panic("error retrieving secret value", zap.Error(err))
+			os.Exit(1)
+		}
+
+		viper.Set("DATABASE_URL", config.DatabaseUrl)
+		viper.Set("DB_NAME", config.DatabaseName)
+		viper.Set("REDIS_URL", config.RedisUrl)
+		viper.Set("JWT_SECRET_KEY", config.JWTSecretKey)
 	}
-
-	// Set configuration variables based on struct fields
-	var config EnvConfig
-	if err := viper.Unmarshal(&config); err != nil {
-		logger.Panic("error retrieving secret value", zap.Error(err))
-		os.Exit(1)
-	}
-
-	viper.Set("DATABASE_URL", config.DatabaseUrl)
-	viper.Set("DB_NAME", config.DatabaseName)
-	viper.Set("REDIS_URL", config.RedisUrl)
-	viper.Set("JWT_SECRET_KEY", config.JWTSecretKey)
 
 }
 

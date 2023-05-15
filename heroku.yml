@@ -1,0 +1,7 @@
+setup:
+  config:
+build:
+  docker:
+    web: Dockerfile
+  config:
+    APP_ENV: prod

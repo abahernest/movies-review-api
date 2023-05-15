@@ -23,10 +23,9 @@ FROM alpine:3.11.3
 WORKDIR /
 
 COPY --from=builder /app/movies-review-api .
-COPY --from=builder /app/domain/views /app/domain/views
 
 EXPOSE 6001
 
 #USER nonroot:nonroot
 
-CMD [ "/movies-review-api" ]
+CMD [ "./movies-review-api" ]

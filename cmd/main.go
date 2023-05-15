@@ -27,12 +27,13 @@ func main() {
 	env := os.Getenv("APP_ENV")
 
 	if env == "" {
+		fmt.Println("APP_ENV not set, using dev")
 		env = "dev"
 	}
 
 	l.Info(fmt.Sprintf("Loading %s env", env))
 
-	domain.GetSecrets(l)
+	domain.GetSecrets(l, env)
 
 	repo := mongodb.New(l)
 
