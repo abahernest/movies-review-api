@@ -10,8 +10,9 @@ import (
 )
 
 type MongoRepository struct {
-	UserRepo domain.UserRepository
-	FilmRepo domain.FilmRepository
+	UserRepo    domain.UserRepository
+	FilmRepo    domain.FilmRepository
+	CommentRepo domain.CommentRepository
 }
 
 func New(l *zap.Logger) *MongoRepository {
@@ -33,7 +34,8 @@ func New(l *zap.Logger) *MongoRepository {
 	}
 
 	return &MongoRepository{
-		UserRepo: NewUserRepository(l),
-		FilmRepo: NewFilmRepository(l),
+		UserRepo:    NewUserRepository(l),
+		FilmRepo:    NewFilmRepository(l),
+		CommentRepo: NewCommentRepository(l),
 	}
 }

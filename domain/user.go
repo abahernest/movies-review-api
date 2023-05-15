@@ -14,10 +14,10 @@ import (
 
 type User struct {
 	mgm.DefaultModel `bson:",inline"`
-	Firstname        string     `validate:"required" json:"firstname" bson:"firstname"`
-	Lastname         string     `validate:"required" json:"lastname" bson:"lastname"`
-	Email            string     `validate:"required" json:"email" bson:"email"`
-	Password         string     `validate:"required" json:"password,omitempty" bson:"password"`
+	Firstname        string     `json:"firstname" bson:"firstname"`
+	Lastname         string     `json:"lastname" bson:"lastname"`
+	Email            string     `json:"email" bson:"email"`
+	Password         string     `json:"password,omitempty" bson:"password"`
 	DeletedAt        *time.Time `json:"deleted_at,omitempty" bson:"deleted_at"`
 }
 

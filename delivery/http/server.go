@@ -7,8 +7,9 @@ import (
 )
 
 type Config struct {
-	UserRepo domain.UserRepository
-	FilmRepo domain.FilmRepository
+	UserRepo    domain.UserRepository
+	FilmRepo    domain.FilmRepository
+	CommentRepo domain.CommentRepository
 }
 
 func RunHttpServer(config Config) *fiber.App {

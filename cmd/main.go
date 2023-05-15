@@ -37,8 +37,9 @@ func main() {
 	repo := mongodb.New(l)
 
 	httpConfig := httpDelivery.Config{
-		UserRepo: repo.UserRepo,
-		FilmRepo: repo.FilmRepo,
+		UserRepo:    repo.UserRepo,
+		FilmRepo:    repo.FilmRepo,
+		CommentRepo: repo.CommentRepo,
 	}
 
 	app := port.RunHttpServer(httpConfig)
