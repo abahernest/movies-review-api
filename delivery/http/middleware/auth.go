@@ -4,10 +4,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"os"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gofiber/fiber/v2"
-	"github.com/spf13/viper"
 	"movies-review-api/domain"
 	"reflect"
 	"strings"
@@ -26,7 +26,7 @@ func jwtError(c *fiber.Ctx, err error) error {
 
 func Protected(userRepo domain.UserRepository) func(*fiber.Ctx) error {
 	return NewJwtHandler(domain.Config{
-		SigningKey:        []byte(viper.GetString("JWT_SECRET_KEY")),
+		SigningKey:        []byte(os.Getenv("JWT_SECRET_KEY")),
 		ErrorHandler:      jwtError,
 		ValidatorFunction: userRepo,
 	})

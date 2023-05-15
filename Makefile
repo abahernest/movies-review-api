@@ -4,8 +4,7 @@ run-dev:
 
 run-prod:
 	export APP_ENV="prod" && \
-	cd ./cmd && \
- 	go run -race main.go
+    go run -race cmd/main.go
 
 build-dev:
 	docker build -f Dockerfile-dev --tag abahernest/movies-review-api:dev-$(version) --platform=linux/amd64 .

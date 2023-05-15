@@ -2,8 +2,8 @@ package mongodb
 
 import (
 	"github.com/Kamva/mgm/v2"
-	"github.com/spf13/viper"
 	"movies-review-api/domain"
+	"os"
 
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.uber.org/zap"
@@ -19,12 +19,12 @@ func New(l *zap.Logger) *MongoRepository {
 	// connect to mongodb
 	var dbName, connectionString string
 
-	if viper.Get("DB_NAME") != nil {
-		dbName = viper.Get("DB_NAME").(string)
+	if os.Getenv("DB_NAME") != "" {
+		dbName = os.Getenv("DB_NAME")
 	}
 
-	if viper.Get("DATABASE_URL") != nil {
-		connectionString = viper.Get("DATABASE_URL").(string)
+	if os.Getenv("DATABASE_URL") != "" {
+		connectionString = os.Getenv("DATABASE_URL")
 	}
 
 	err := mgm.SetDefaultConfig(nil, dbName, options.Client().ApplyURI(connectionString), options.Client().SetMaxPoolSize(500))

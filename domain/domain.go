@@ -7,7 +7,6 @@ import (
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 	"github.com/joho/godotenv"
-	"github.com/spf13/viper"
 	"go.uber.org/zap"
 	"golang.org/x/crypto/bcrypt"
 	"log"
@@ -39,36 +38,11 @@ func HandleError(c *fiber.Ctx, err error) error {
 		})
 }
 
-func GetSecrets(logger *zap.Logger, app_env string) {
+func GetSecrets(logger *zap.Logger) {
 
-	if app_env == "prod" {
-		err := godotenv.Load()
-		if err != nil {
-			log.Fatal("Error loading .env file")
-		}
-	} else {
-		// Load the configuration file
-		viper.SetConfigFile(".env")
-		viper.SetConfigType("env")
-		viper.AddConfigPath(".")
-		viper.AutomaticEnv()
-
-		if err := viper.ReadInConfig(); err != nil {
-			logger.Panic("Error reading config file", zap.Error(err))
-			os.Exit(1)
-		}
-
-		// Set configuration variables based on struct fields
-		var config EnvConfig
-		if err := viper.Unmarshal(&config); err != nil {
-			logger.Panic("error retrieving secret value", zap.Error(err))
-			os.Exit(1)
-		}
-
-		viper.Set("DATABASE_URL", config.DatabaseUrl)
-		viper.Set("DB_NAME", config.DatabaseName)
-		viper.Set("REDIS_URL", config.RedisUrl)
-		viper.Set("JWT_SECRET_KEY", config.JWTSecretKey)
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
 	}
 
 }
@@ -84,7 +58,7 @@ func GenerateToken(user User) (string, error) {
 	claims["user"] = usr
 	claims["exp"] = time.Now().Add(time.Hour * 24).Unix()
 
-	t, err := token.SignedString([]byte(viper.GetString("JWT_SECRET_KEY")))
+	t, err := token.SignedString([]byte(os.Getenv("JWT_SECRET_KEY")))
 
 	if err != nil {
 		return "", err
